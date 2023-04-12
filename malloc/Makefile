@@ -57,14 +57,13 @@ VPATH = $(shell find $(SRCDIR) -type d | tr '\n' ':' | sed -E 's/(.*):/\1/')
 ##---------------------------------------------------------------------
 
 all: $(NAME)
-	@echo Build complete
 
 print_vars:
 	$(foreach v, $(.VARIABLES), $(if $(filter file,$(origin $(v))), $(info $(v)=$($(v)))))
 
 
 $(NAME): $(BINDIR) $(OBJS) $(LIBS)
-	$(CC) -fpic -dynamiclib $(BUILDDIR)/*.$(OBJEXT) -o $(NAME)
+	$(CC) -fPIC -dynamiclib $(BUILDDIR)/*.$(OBJEXT) -o $(NAME)
 
 $(LIBDIR)/libft/bin/libft.a:
 	$(MAKE) -C $(LIBDIR)/libft

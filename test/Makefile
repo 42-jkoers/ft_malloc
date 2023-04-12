@@ -53,11 +53,12 @@ VPATH = $(shell find $(SRCDIR) -type d | tr '\n' ':' | sed -E 's/(.*):/\1/')
 ## BUILD RULES
 ##---------------------------------------------------------------------
 
-all: $(NAME)
+all: $(BINDIR) $(NAME)
+	$(MAKE) -C ../malloc
+	cp ../malloc/bin/libmalloc.so bin/libmalloc.so
 	@echo Build complete
 
-$(NAME): $(BUILDDIR) $(OBJS) $(HEADERS) $(SO)
-	$(MAKE) -C ../malloc
+$(NAME): $(SO) $(BUILDDIR) $(OBJS) $(HEADERS)
 	$(CC) $(LIBS) -o $@ $(OBJS) $(FLAGS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
@@ -72,6 +73,7 @@ ifneq ($(BUILDDIR),.)
 	/bin/rm -rf $(BUILDDIR)/
 endif
 	rm -f $(NAME)
+	rm -rf $(BINDIR)
 
 re:
 	$(MAKE) clean
@@ -83,4 +85,4 @@ $(BINDIR):
 $(SO):
 	$(MAKE) -C ../malloc
 # Dirty hack below
-	cp ../malloc/bin/libmalloc.so bin
+	cp ../malloc/bin/libmalloc.so $(BINDIR)
