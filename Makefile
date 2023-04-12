@@ -18,12 +18,10 @@ OBJEXT      	= o
 HEADEREXT		= h
 HEADERDIR		= include
 BUILDDIR    	= obj
+LIBDIR			= lib
 SRC				= $(wildcard $(SRCDIR)/*.$(SRCEXT))
 OBJS			= $(foreach src,$(SRC),$(BUILDDIR)/$(notdir $(src:.$(SRCEXT)=.$(OBJEXT))))
 HEADERS 		= $(shell find $(HEADERDIR) -name '*.$(HEADEREXT)')
-
-UNAME_S			= $(shell uname -s)
-LINUX_GL_LIBS	= -lGL
 
 FLAGS			= -Wall -Wextra -Werror
 
@@ -35,15 +33,16 @@ endif
 
 LIBS			=
 
+UNAME_S			= $(shell uname -s)
 ifeq ($(UNAME_S), Linux)
-	NCPU = $(shell nproc --all)
+NCPU 			= $(shell nproc --all)
+else ifeq ($(UNAME_S), Darwin)
+NCPU 			= $(shell sysctl -n hw.ncpu)
+else
+NCPU 			= 4
 endif
+MAKEFLAGS		+="j $(NCPU) $(NAME)"
 
-ifeq ($(UNAME_S), Darwin)
-	NCPU = $(shell sysctl -n hw.ncpu)
-endif
-
-MAKEFLAGS+="j $(NCPU) $(NAME)"
 VPATH = $(shell find $(SRCDIR) -type d | tr '\n' ':' | sed -E 's/(.*):/\1/')
 
 ##---------------------------------------------------------------------
@@ -53,16 +52,20 @@ VPATH = $(shell find $(SRCDIR) -type d | tr '\n' ':' | sed -E 's/(.*):/\1/')
 all: $(NAME)
 	@echo Build complete
 
-$(NAME): $(BUILDDIR) $(OBJS) $(HEADERS)
+$(NAME): $(BUILDDIR) $(OBJS) $(HEADERS) $(LIBDIR)/libft/bin/libft.a
 	$(CC) -o $@ $(OBJS) $(FLAGS) $(LIBS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 	$(CC) $(FLAGS) -c -o $(BUILDDIR)/$(notdir $@) $<
 
+$(LIBDIR)/libft/bin/libft.a:
+	$(MAKE) -C $(LIBDIR)/libft
+
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 clean:
+	$(MAKE) -C $(LIBDIR)/libft fclean
 ifneq ($(BUILDDIR),.)
 	/bin/rm -rf $(BUILDDIR)/
 endif
