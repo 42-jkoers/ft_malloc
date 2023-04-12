@@ -1,5 +1,5 @@
 #include <stdio.h>
 
 int main() {
-	printf("Hello World!");
+	ft_malloc(42);
 }
