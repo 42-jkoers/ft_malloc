@@ -55,7 +55,8 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
-test: $(NAME)
+test:
+	@$(MAKE) all > /dev/null
 	@LD_LIBRARY_PATH=/home/joppe/git/malloc/malloc/bin ./tester
 clean:
 	make -C ../malloc clean
