@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         ::::::::             #
-#    Makefile                                           :+:    :+:             #
-#                                                      +:+                     #
-#    By: jkoers <jkoers@student.codam.nl>             +#+                      #
-#                                                    +#+                       #
-#    Created: 2020/11/05 15:36:08 by jkoers        #+#    #+#                  #
-#    Updated: 2021/01/17 13:35:42 by jkoers        ########   odam.nl          #
-#                                                                              #
-# **************************************************************************** #
-
 NAME			= tester
 SO				= ../malloc/bin/libmalloc.so
 
@@ -41,7 +29,7 @@ NCPU 			= $(shell nproc --all)
 else ifeq ($(UNAME_S), Darwin)
 NCPU 			= $(shell sysctl -n hw.ncpu)
 else
-NCPU 			= 4
+$(error Windows is, and should never be supported)
 endif
 MAKEFLAGS		+="j $(NCPU) $(NAME)"
 
@@ -59,14 +47,16 @@ all: $(BINDIR) $(NAME)
 	@echo Build complete
 
 $(NAME): $(SO) $(BUILDDIR) $(OBJS) $(HEADERS)
-	$(CC) $(LIBS) -o $@ $(OBJS) $(FLAGS)
+	$(CC) -o $@ $(OBJS) $(FLAGS) $(LIBS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(HEADERS)
-	$(CC) -I$(HEADERDIR) -c -o $(BUILDDIR)/$(notdir $@) $<
+	$(CC) -I$(HEADERDIR) -c -o $(BUILDDIR)/$(notdir $@) $< $(LIBS)
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
+test: $(NAME)
+	@LD_LIBRARY_PATH=/home/joppe/git/malloc/malloc/bin ./tester
 clean:
 	make -C ../malloc clean
 ifneq ($(BUILDDIR),.)

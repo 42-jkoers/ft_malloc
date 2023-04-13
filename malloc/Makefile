@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         ::::::::             #
-#    Makefile                                           :+:    :+:             #
-#                                                      +:+                     #
-#    By: jkoers <jkoers@student.codam.nl>             +#+                      #
-#                                                    +#+                       #
-#    Created: 2020/11/05 15:36:08 by jkoers        #+#    #+#                  #
-#    Updated: 2021/01/17 13:35:42 by jkoers        ########   odam.nl          #
-#                                                                              #
-# **************************************************************************** #
-
 NAME			= bin/libmalloc.so
 
 SRCEXT      	= c
@@ -37,11 +25,14 @@ LIBS			= $(LIBDIR)/libft/bin/libft.a
 UNAME_S			= $(shell uname -s)
 ifeq ($(UNAME_S), Linux)
 NCPU 			= $(shell nproc --all)
+LIBFLAGS		= -fPIC -shared
 else ifeq ($(UNAME_S), Darwin)
 NCPU 			= $(shell sysctl -n hw.ncpu)
+LIBFLAGS		= -fPIC -dynamiclib
 else
-NCPU 			= 4
+$(error Windows is, and should never be supported)
 endif
+
 MAKEFLAGS		+="j $(NCPU) $(NAME)"
 
 ifeq ($(HOSTTYPE),)
@@ -63,7 +54,7 @@ print_vars:
 
 
 $(NAME): $(BINDIR) $(OBJS) $(LIBS)
-	$(CC) -fPIC -dynamiclib $(BUILDDIR)/*.$(OBJEXT) -o $(NAME)
+	$(CC) $(LIBFLAGS) $(BUILDDIR)/*.$(OBJEXT) -o $(NAME)
 
 $(LIBDIR)/libft/bin/libft.a:
 	$(MAKE) -C $(LIBDIR)/libft
