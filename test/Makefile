@@ -43,8 +43,9 @@ VPATH = $(shell find $(SRCDIR) -type d | tr '\n' ':' | sed -E 's/(.*):/\1/')
 
 all: $(BINDIR) $(NAME)
 	$(MAKE) -C ../malloc
-	cp ../malloc/bin/libmalloc.so bin/libmalloc.so
+	@cp ../malloc/bin/libmalloc.so bin/libmalloc.so
 	@echo Build complete
+	@echo
 
 $(NAME): $(SO) $(BUILDDIR) $(OBJS) $(HEADERS)
 	$(CC) -o $@ $(OBJS) $(FLAGS) $(LIBS)
@@ -56,7 +57,7 @@ $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 test:
-	@$(MAKE) all &> /dev/null
+	@$(MAKE) all 2>&1 | grep -v "forced in submake: disabling jobserver mode."
 	@LD_LIBRARY_PATH=/home/joppe/git/malloc/malloc/bin ./tester
 
 clean:
