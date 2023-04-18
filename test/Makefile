@@ -56,8 +56,9 @@ $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 test:
-	@$(MAKE) all > /dev/null
+	@$(MAKE) all &> /dev/null
 	@LD_LIBRARY_PATH=/home/joppe/git/malloc/malloc/bin ./tester
+
 clean:
 	make -C ../malloc clean
 ifneq ($(BUILDDIR),.)
