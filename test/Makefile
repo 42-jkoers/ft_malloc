@@ -58,7 +58,11 @@ $(BUILDDIR):
 
 test:
 	@$(MAKE) all 2>&1 | grep -v "forced in submake: disabling jobserver mode."
-	@LD_LIBRARY_PATH=/home/joppe/git/malloc/malloc/bin ./tester
+	@LD_LIBRARY_PATH=$$PWD/../malloc/bin ./$(NAME)
+
+test-valgrind:
+	@$(MAKE) all 2>&1 | grep -v "forced in submake: disabling jobserver mode."
+	LD_LIBRARY_PATH=$$PWD/../malloc/bin valgrind --leak-check=full --show-leak-kinds=definite,indirect,possible --track-origins=yes ./$(NAME)
 
 clean:
 	make -C ../malloc clean
