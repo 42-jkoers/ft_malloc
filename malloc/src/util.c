@@ -21,6 +21,12 @@ void* ft_mmap(void* addr, size_t length)
 	return map;
 }
 
+void ft_munmap(void* addr, size_t length)
+{
+	assert(length % PAGE_SIZE == 0);
+	assert(munmap(addr, length) == 0);
+}
+
 // Assert size is valid for mmap
 void assert_valid_mmap_size(size_t size)
 {
