@@ -35,7 +35,7 @@ void assert_test_data(void* ptr, size_t size)
 
 void test_malloc(size_t size)
 {
-	void* ptr = malloc(size);
+	void* ptr = ft_malloc(size);
 	write_test_data(ptr, size);
 	assert_test_data(ptr, size);
 	// ft_free(ptr);
