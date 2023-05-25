@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "malloc"
+		},
+		{
+			"path": "test",
+		},
+		{
+			"path": ".",
+			"name": "root"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"util.h": "c",
+			"main.h": "c"
+		}
+	}
+
+}

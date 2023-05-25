@@ -57,11 +57,13 @@ $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 test:
-	@$(MAKE) all 2>&1 | grep -v "forced in submake: disabling jobserver mode."
+	@$(MAKE) all 2>&1 | grep -v "make[2]:"
 	@LD_LIBRARY_PATH=$$PWD/../malloc/bin ./$(NAME)
 
+start-valgrind-container:
+	docker run -it --rm -v $$PWD/..:/malloc nloomans/codam
+
 test-valgrind:
-	@$(MAKE) all 2>&1 | grep -v "forced in submake: disabling jobserver mode."
 	LD_LIBRARY_PATH=$$PWD/../malloc/bin valgrind --leak-check=full --show-leak-kinds=definite,indirect,possible --track-origins=yes ./$(NAME)
 
 clean:
