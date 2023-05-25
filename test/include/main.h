@@ -4,4 +4,4 @@
 #include <stdint.h>
 
 extern void* ft_malloc(size_t);
-extern void	 ft_free(void* ptr);
+extern void	 ft_free(void*);
