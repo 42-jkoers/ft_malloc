@@ -13,7 +13,7 @@ size_t nearest_multiple_of(size_t number, size_t multiple)
 // safe mmap
 void* ft_mmap(void* addr, size_t length)
 {
-	assert(length % 4096 == 0);
+	assert(length % PAGE_SIZE == 0);
 
 	void* map = mmap(addr, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
 	assert(map != MAP_FAILED);
