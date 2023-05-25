@@ -57,14 +57,16 @@ $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 test:
-	@$(MAKE) all 2>&1 | grep -v "make[2]:"
+	@$(MAKE) all 2>&1 | grep -v "make\[2\]\:" | grep -v "make\[1\]\:"
 	@LD_LIBRARY_PATH=$$PWD/../malloc/bin ./$(NAME)
+
+test-valgrind:
+	@$(MAKE) all 2>&1 | grep -v "make\[2\]\:" | grep -v "make\[1\]\:"
+	LD_LIBRARY_PATH=$$PWD/../malloc/bin valgrind --leak-check=full --show-leak-kinds=definite,indirect,possible --track-origins=yes ./$(NAME)
 
 start-valgrind-container:
 	docker run -it --rm -v $$PWD/..:/malloc nloomans/codam
 
-test-valgrind:
-	LD_LIBRARY_PATH=$$PWD/../malloc/bin valgrind --leak-check=full --show-leak-kinds=definite,indirect,possible --track-origins=yes ./$(NAME)
 
 clean:
 	make -C ../malloc clean
