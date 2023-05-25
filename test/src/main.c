@@ -9,7 +9,7 @@ void write_test_data(void* ptr, size_t size)
 
 	while (i < size)
 	{
-		((char*)ptr)[i] = c++;
+		((uint8_t*)ptr)[i] = c++;
 		i++;
 	}
 }
