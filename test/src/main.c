@@ -34,11 +34,20 @@ void assert_test_data(void* ptr, size_t size)
 		EXIT_WITH_ERROR("Test data is not valid");
 }
 
-int main()
+void run_tests()
 {
 	void* ptr = ft_malloc(100);
 	write_test_data(ptr, 100);
 	assert_test_data(ptr, 100);
+	// ft_free(ptr);
+}
+
+int main()
+{
+	for (size_t i = 0; i < 100; i++)
+	{
+		run_tests();
+	}
 
 	printf("Test passed\n");
 }
