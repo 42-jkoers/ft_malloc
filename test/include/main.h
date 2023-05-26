@@ -5,3 +5,4 @@
 
 extern void* ft_malloc(size_t);
 extern void	 ft_free(void*);
+extern void	 print_allocations();

@@ -54,7 +54,7 @@ int main()
 	{
 		run_tests();
 	}
-
+	print_allocations();
 	printf("Test passed\n");
 	return 0;
 }
