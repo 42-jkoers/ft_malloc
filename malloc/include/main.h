@@ -21,7 +21,8 @@ typedef struct
 typedef enum
 {
 	FREE,
-	ALLOCATED,
+	USED,
+	UNMAPPED,
 } e_status;
 
 typedef struct
@@ -34,7 +35,7 @@ typedef struct
 
 typedef struct
 {
-	t_bin  bins[MAX_ALLOCATIONS * (4096 / BIN_SMALL)];
+	t_bin  bins[MAX_ALLOCATIONS];
 	size_t bins_len;
 	t_mmap mmaps[MAX_ALLOCATIONS];
 	size_t mmaps_len;

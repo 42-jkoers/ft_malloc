@@ -17,6 +17,7 @@ void* ft_mmap(void* addr, size_t length)
 
 	void* map = mmap(addr, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
 	assert(map != MAP_FAILED);
+	assert(map);
 
 	return map;
 }

@@ -32,6 +32,8 @@ void add_memory_map(t_memory_maps* maps, size_t minumum_size)
 
 size_t remaining_mmap_size(const t_mmap* mmap)
 {
+	if (!mmap->start)
+		return 0;
 	return mmap->capacity - (mmap->end - mmap->start);
 }
 
@@ -44,7 +46,7 @@ t_bin initialize_bin(t_memory_maps* maps, t_mmap* mmap, size_t size)
 		.p = mmap->end,
 		.mmap = mmap,
 		.size = size,
-		.status = ALLOCATED};
+		.status = USED};
 	mmap->end += size;
 	mmap->uses++;
 	maps->bins[maps->bins_len++] = bin;
@@ -64,10 +66,23 @@ t_bin create_bin(t_memory_maps* maps, size_t size)
 	return create_bin(maps, size);
 }
 
-void release_mmap(t_memory_maps* maps, t_mmap* mmap)
+// marking all bins in this mmap as unmapped memory
+void unmap_bins(t_memory_maps* maps, const t_mmap* mmap)
+{
+	// TODO: can this be optimized?
+	for (size_t i = 0; i < maps->bins_len; i++) // TODO: reverse iteration?
+	{
+		t_bin* bin = &maps->bins[i];
+		if (bin->mmap == mmap)
+			bin->status = UNMAPPED;
+	}
+}
+
+void unmap_mmap(t_memory_maps* maps, t_mmap* mmap)
 {
 	assert(mmap >= maps->mmaps && mmap < maps->mmaps + maps->mmaps_len);
 
+	unmap_bins(maps, mmap);
 	ft_munmap(mmap->start, mmap->capacity);
 	mmap->start = NULL;
 }
@@ -77,7 +92,7 @@ void release_bin(t_memory_maps* maps, t_bin* bin)
 	bin->status = FREE;
 	if (bin->mmap->uses-- == 0)
 	{
-		release_mmap(maps, bin->mmap);
+		unmap_mmap(maps, bin->mmap);
 	}
 }
 
@@ -113,7 +128,6 @@ t_bin* find_reusable_bin(t_memory_maps* maps, size_t size)
 		t_bin* bin = &maps->bins[i];
 		if (bin_should_be_reused(bin, size))
 		{
-			printf("reusing bin %p\n", bin->p);
 			return bin;
 		}
 	}
@@ -126,7 +140,7 @@ t_bin upsert_bin(t_memory_maps* maps, size_t size)
 	t_bin* bin = find_reusable_bin(maps, size);
 	if (bin)
 	{
-		bin->status = ALLOCATED;
+		bin->status = USED;
 		return *bin;
 	}
 	// if no reusable bin found, create a new one
