@@ -58,7 +58,7 @@ $(BUILDDIR):
 
 test:
 	@$(MAKE) all 2>&1 | grep -v "make\[2\]\:" | grep -v "make\[1\]\:"
-	@LD_LIBRARY_PATH=$$PWD/../malloc/bin ./$(NAME)
+	LD_LIBRARY_PATH=$$PWD/../malloc/bin ./$(NAME)
 
 test-valgrind:
 	@$(MAKE) all 2>&1 | grep -v "make\[2\]\:" | grep -v "make\[1\]\:"
