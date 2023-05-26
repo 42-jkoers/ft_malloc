@@ -1,0 +1,30 @@
+// See: https://go.microsoft.com/fwlink/?linkid=830387
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "osx cppdbg",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/test/tester",
+			"args": [
+				"LD_LIBRARY_PATH=$PWD/../malloc/bin"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}/test",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "lldb",
+			"preLaunchTask": "make"
+		},
+		{
+			"name": "osx lldb",
+			"type": "lldb",
+			"request": "launch",
+			"program": "${workspaceFolder}/test/tester",
+			"args": [],
+			"cwd": "${workspaceFolder}/test",
+			"preLaunchTask": "make"
+		},
+	]
+}
