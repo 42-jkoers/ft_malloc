@@ -22,7 +22,7 @@ void* ft_mmap(void* addr, size_t length)
 	return map;
 }
 
-e_status ft_mmap_try_grow(void* addr, size_t length)
+e_result ft_mmap_try_grow(void* addr, size_t length)
 {
 	assert(length % PAGE_SIZE == 0);
 
