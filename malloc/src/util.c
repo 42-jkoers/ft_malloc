@@ -10,15 +10,18 @@ size_t nearest_multiple_of(size_t number, size_t multiple)
 	return number + multiple - remainder;
 }
 
+static void* ft_mmap_unsafe(void* addr, size_t length)
+{
+	assert(length % PAGE_SIZE == 0);
+	return mmap(addr, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
+}
+
 // safe mmap
 void* ft_mmap(void* addr, size_t length)
 {
-	assert(length % PAGE_SIZE == 0);
-
-	void* map = mmap(addr, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
+	void* map = ft_mmap_unsafe(addr, length);
 	assert(map != MAP_FAILED);
 	assert(map);
-
 	return map;
 }
 
@@ -26,7 +29,7 @@ e_result ft_mmap_try_grow(void* addr, size_t length)
 {
 	assert(length % PAGE_SIZE == 0);
 
-	void* map = mmap(addr, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED | MAP_FIXED, -1, 0);
+	void* map = ft_mmap_unsafe(addr, length);
 	if (map == MAP_FAILED)
 		return FAIL;
 	if (!map)
@@ -39,6 +42,7 @@ e_result ft_mmap_try_grow(void* addr, size_t length)
 // and free the old map
 void* ft_mmap_grow(void* map, size_t curr_size, size_t new_size)
 {
+	assert(curr_size % PAGE_SIZE == 0);
 	assert(new_size % PAGE_SIZE == 0);
 
 	if (ft_mmap_try_grow(map, new_size) == SUCCESS)
