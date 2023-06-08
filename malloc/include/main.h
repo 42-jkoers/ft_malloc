@@ -23,6 +23,7 @@ typedef struct
 	size_t capacity; // in bytes
 	size_t uses;
 } t_mmap;
+size_t mmap_remaining_size(const t_mmap* mmap);
 
 typedef enum
 {
@@ -48,13 +49,14 @@ typedef struct
 	size_t	mmaps_len;
 	size_t	mmaps_size;
 } t_mmaps;
-
-t_mmaps* mmaps_singleton();
 t_mmaps	 mmaps_construct();
 void	 mmaps_destruct(t_mmaps* maps);
+t_mmaps* mmaps_singleton();
 size_t	 mmaps_mmap_capacity(const t_mmaps* maps);
 size_t	 mmaps_bin_capacity(const t_mmaps* maps);
-size_t	 mmap_remaining_size(const t_mmap* mmap);
+void	 mmaps_grow_mmap(t_mmaps* maps);
+void	 mmaps_grow_bins(t_mmaps* maps);
+
 // todo forward declare t_mmaps
 t_bin	bin_construct(const t_mmaps* maps, t_mmap* mmap, size_t size);
 t_mmap* bin_get_mmap(t_mmaps* maps, const t_bin* bin);

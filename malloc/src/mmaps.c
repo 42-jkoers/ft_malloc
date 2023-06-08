@@ -36,7 +36,16 @@ size_t mmaps_bin_capacity(const t_mmaps* maps)
 
 void mmaps_grow_mmap(t_mmaps* maps)
 {
-	maps->mmaps_size *= 2;
+	const size_t new_size = maps->mmaps_size * 2;
+	maps->mmaps = ft_mmap_grow(maps->mmaps, maps->mmaps_size, new_size);
+	maps->mmaps_size = new_size;
+}
+
+void mmaps_grow_bins(t_mmaps* maps)
+{
+	const size_t new_size = maps->bins_size * 2;
+	maps->bins = ft_mmap_grow(maps->bins, maps->bins_size, new_size);
+	maps->bins_size = new_size;
 }
 
 void mmaps_destruct(t_mmaps* maps)
