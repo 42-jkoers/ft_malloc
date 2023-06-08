@@ -39,16 +39,22 @@ void print_allocations()
 	{
 		t_mmap* mmap = &g_allocations.mmaps[i];
 		if (mmap->start)
+		{
+			printf("mmap in use %p %lu\n", mmap->start, i);
 			mmaps_count++;
+		}
 	}
-	printf("# of mmaps in use: %zu\n", mmaps_count);
+	printf("number of mmaps in use: %lu\n\n", mmaps_count);
 
 	size_t bins_count = 0;
 	for (size_t i = 0; i < g_allocations.bins_len; i++)
 	{
 		t_bin* bin = &g_allocations.bins[i];
 		if (bin->status == USED)
+		{
+			printf("bin in use  %p %lu\n", bin->p, i);
 			bins_count++;
+		}
 	}
-	printf("# of bins in use : %zu\n", bins_count);
+	printf("number of bins in use : %lu\n\n", bins_count);
 }
