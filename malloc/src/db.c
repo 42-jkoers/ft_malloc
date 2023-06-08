@@ -90,7 +90,7 @@ void unmap_mmap(t_memory_maps* maps, t_mmap* mmap)
 void release_bin(t_memory_maps* maps, t_bin* bin)
 {
 	bin->status = FREE;
-	if (bin->mmap->uses-- == 0)
+	if (--bin->mmap->uses == 0)
 	{
 		unmap_mmap(maps, bin->mmap);
 	}
