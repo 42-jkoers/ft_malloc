@@ -38,7 +38,7 @@ void print_allocations()
 	for (size_t i = 0; i < g_allocations.mmaps_len; i++)
 	{
 		t_mmap* mmap = &g_allocations.mmaps[i];
-		if (!mmap->start)
+		if (mmap->start)
 			mmaps_count++;
 	}
 	printf("# of mmaps in use: %zu\n", mmaps_count);
