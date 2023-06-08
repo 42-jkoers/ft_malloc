@@ -1,6 +1,8 @@
 #include "main.h"
 #include "util.h"
 #include <stdio.h>
+#include <time.h>
+#define BILLION 1000000000L
 
 void write_test_data(void* ptr, size_t size)
 {
@@ -48,13 +50,31 @@ void run_tests()
 	test_malloc(10000);
 }
 
+struct timespec start_clock()
+{
+	struct timespec start_time;
+	clock_gettime(CLOCK_MONOTONIC, &start_time);
+	return start_time;
+}
+
+long long get_duration_ns(struct timespec start_time)
+{
+	struct timespec end_time;
+	clock_gettime(CLOCK_MONOTONIC, &end_time);
+
+	long long ns = BILLION * (end_time.tv_sec - start_time.tv_sec) + end_time.tv_nsec - start_time.tv_nsec;
+	return ns;
+}
+
 int main()
 {
+	struct timespec time = start_clock();
 	for (size_t i = 0; i < 100; i++)
 	{
 		run_tests();
 	}
+	long long duration = get_duration_ns(time);
 	print_allocations();
-	printf("Test passed\n");
+	printf("Test passed in %llu nanoseconds, or %llu miliseconds\n", duration, duration / 1000000);
 	return 0;
 }
