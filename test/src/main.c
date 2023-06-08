@@ -54,22 +54,24 @@ void run_tests()
 
 struct timespec start_clock()
 {
-	struct timespec start_time;
-	clock_gettime(CLOCK_MONOTONIC, &start_time);
-	return start_time;
+	struct timespec start;
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	return start;
 }
 
-long long get_duration_ns(struct timespec start_time)
+long long get_duration_ns(struct timespec start)
 {
-	struct timespec end_time;
-	clock_gettime(CLOCK_MONOTONIC, &end_time);
+	struct timespec end;
+	clock_gettime(CLOCK_MONOTONIC, &end);
 
-	long long ns = BILLION * (end_time.tv_sec - start_time.tv_sec) + end_time.tv_nsec - start_time.tv_nsec;
+	long long ns = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
 	return ns;
 }
 
 int main()
 {
+	printf("========================================\n");
+
 	struct timespec time = start_clock();
 	for (size_t i = 0; i < 100; i++)
 	{
@@ -81,8 +83,7 @@ int main()
 	printf("  Allocations       : %lu\n", allocations);
 	const float allocs_per_sec = (float)allocations / (float)duration * BILLION;
 	printf("  Allocations/second: %.1e - %f\n", allocs_per_sec, allocs_per_sec);
-	printf("  Duration          : %lld ns\n", duration);
-	printf("  Duration          : %lld ms\n", duration / 1000000);
+	printf("  Duration          : %lld ms - %lld ns\n", duration / 1000000, duration);
 
 	return 0;
 }

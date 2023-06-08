@@ -67,7 +67,6 @@ test-valgrind:
 start-valgrind-container:
 	docker run -it --rm -v $$PWD/..:/malloc nloomans/codam
 
-
 clean:
 	make -C ../malloc clean
 ifneq ($(BUILDDIR),.)
