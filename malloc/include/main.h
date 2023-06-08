@@ -10,6 +10,12 @@
 #define BIN_TINY 16
 #define PAGE_SIZE 4096
 
+typedef enum
+{
+	FAIL,
+	SUCCESS,
+} e_result;
+
 typedef struct
 {
 	void*  start;
@@ -50,6 +56,9 @@ size_t	 mmaps_mmap_capacity(const t_mmaps* maps);
 size_t	 mmaps_bin_capacity(const t_mmaps* maps);
 
 void*	 ft_mmap(void* addr, size_t length);
+void*	 ft_mmap_grow(void* map, size_t curr_size, size_t new_size);
+
+void*	 ft_memcpy(void* dest, const void* src, size_t n);
 size_t	 nearest_multiple_of(size_t number, size_t multiple);
 void	 assert_valid_mmap_size(size_t size);
 t_bin	 upsert_bin(t_mmaps* maps, size_t size);

@@ -34,6 +34,11 @@ size_t mmaps_bin_capacity(const t_mmaps* maps)
 	return maps->bins_size / sizeof(t_bin);
 }
 
+void mmaps_grow_mmap(t_mmaps* maps)
+{
+	maps->mmaps_size *= 2;
+}
+
 void mmaps_destruct(t_mmaps* maps)
 {
 	ft_munmap(maps->bins, maps->bins_size);

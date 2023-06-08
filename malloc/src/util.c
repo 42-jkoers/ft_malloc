@@ -22,6 +22,34 @@ void* ft_mmap(void* addr, size_t length)
 	return map;
 }
 
+e_status ft_mmap_try_grow(void* addr, size_t length)
+{
+	assert(length % PAGE_SIZE == 0);
+
+	void* map = mmap(addr, length, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED | MAP_FIXED, -1, 0);
+	if (map == MAP_FAILED)
+		return FAIL;
+	if (!map)
+		return FAIL;
+	return SUCCESS;
+}
+
+// attemps to grow the mmap, if it fails
+// it will create a new map and copy the old map into it
+// and free the old map
+void* ft_mmap_grow(void* map, size_t curr_size, size_t new_size)
+{
+	assert(new_size % PAGE_SIZE == 0);
+
+	if (ft_mmap_try_grow(map, new_size) == SUCCESS)
+		return map;
+
+	void* new_map = ft_mmap(NULL, new_size);
+	ft_memcpy(new_map, map, curr_size);
+	ft_munmap(map, curr_size);
+	return new_map;
+}
+
 void ft_munmap(void* addr, size_t length)
 {
 	assert(length % PAGE_SIZE == 0);
