@@ -7,7 +7,7 @@
 #include <sys/types.h>
 
 #define MAX_ALLOCATIONS 1000
-#define BIN_SMALL 32
+#define BIN_TINY 16
 #define PAGE_SIZE 4096
 
 typedef struct

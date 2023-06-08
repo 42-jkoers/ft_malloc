@@ -16,6 +16,8 @@ t_mmaps g_allocations = {
 
 void* ft_malloc(size_t size)
 {
+	if (size < BIN_TINY)
+		size = BIN_TINY;
 	t_bin bin = upsert_bin(mmaps_singleton(), size);
 	return bin.p;
 }
