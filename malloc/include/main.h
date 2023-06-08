@@ -41,19 +41,19 @@ typedef struct
 	t_mmap* mmaps;
 	size_t	mmaps_len;
 	size_t	mmaps_size;
-} t_memory_maps;
+} t_mmaps;
 
-t_memory_maps* memory_maps_singleton();
-t_memory_maps  memory_maps_construct();
-void		   memory_maps_destruct(t_memory_maps* maps);
-size_t		   memory_maps_mmap_capacity(const t_memory_maps* maps);
-size_t		   memory_maps_bin_capacity(const t_memory_maps* maps);
+t_mmaps* mmaps_singleton();
+t_mmaps	 mmaps_construct();
+void	 mmaps_destruct(t_mmaps* maps);
+size_t	 mmaps_mmap_capacity(const t_mmaps* maps);
+size_t	 mmaps_bin_capacity(const t_mmaps* maps);
 
-void*		   ft_mmap(void* addr, size_t length);
-size_t		   nearest_multiple_of(size_t number, size_t multiple);
-void		   assert_valid_mmap_size(size_t size);
-t_bin		   upsert_bin(t_memory_maps* maps, size_t size);
-void		   release_bin(t_memory_maps* maps, t_bin* bin);
-void		   ft_munmap(void* addr, size_t length);
-t_bin*		   find_reusable_bin(t_memory_maps* maps, size_t size);
-t_bin*		   find_bin(t_memory_maps* maps, void* p);
+void*	 ft_mmap(void* addr, size_t length);
+size_t	 nearest_multiple_of(size_t number, size_t multiple);
+void	 assert_valid_mmap_size(size_t size);
+t_bin	 upsert_bin(t_mmaps* maps, size_t size);
+void	 release_bin(t_mmaps* maps, t_bin* bin);
+void	 ft_munmap(void* addr, size_t length);
+t_bin*	 find_reusable_bin(t_mmaps* maps, size_t size);
+t_bin*	 find_bin(t_mmaps* maps, void* p);
