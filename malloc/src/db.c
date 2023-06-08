@@ -30,36 +30,17 @@ void add_memory_map(t_mmaps* maps, size_t minumum_size)
 	mmap->uses = 0;
 }
 
-size_t remaining_mmap_size(const t_mmap* mmap)
-{
-	if (!mmap->start)
-		return 0;
-	return mmap->capacity - (mmap->end - mmap->start);
-}
-
-// @param mmap: the mmap in which the bin is located
-t_bin initialize_bin(t_mmaps* maps, t_mmap* mmap, size_t size)
-{
-	assert(remaining_mmap_size(mmap) >= size);
-
-	t_bin bin = {
-		.p = mmap->end,
-		.mmap = mmap,
-		.size = size,
-		.status = USED};
-	mmap->end += size;
-	mmap->uses++;
-	maps->bins[maps->bins_len++] = bin;
-	return bin;
-}
-
 t_bin create_bin(t_mmaps* maps, size_t size)
 {
 	for (size_t i = 0; i < maps->mmaps_len; i++) // TODO: reverse iteration?
 	{
 		t_mmap* mmap = &maps->mmaps[i];
-		if (remaining_mmap_size(mmap) >= size)
-			return initialize_bin(maps, mmap, size);
+		if (mmap_remaining_size(mmap) >= size)
+		{
+			t_bin bin = bin_construct(maps, mmap, size);
+			maps->bins[maps->bins_len++] = bin;
+			return bin;
+		}
 	}
 	// No room in no mmap, create new mmap
 	add_memory_map(maps, size);
@@ -73,7 +54,7 @@ void unmap_bins(t_mmaps* maps, const t_mmap* mmap)
 	for (size_t i = 0; i < maps->bins_len; i++) // TODO: reverse iteration?
 	{
 		t_bin* bin = &maps->bins[i];
-		if (bin->mmap == mmap)
+		if (bin_get_mmap(maps, bin) == mmap)
 			bin->status = UNMAPPED;
 	}
 }
@@ -90,10 +71,10 @@ void unmap_mmap(t_mmaps* maps, t_mmap* mmap)
 void release_bin(t_mmaps* maps, t_bin* bin)
 {
 	bin->status = FREE;
-	if (--bin->mmap->uses == 0)
-	{
-		unmap_mmap(maps, bin->mmap);
-	}
+
+	t_mmap* mmap = bin_get_mmap(maps, bin);
+	if (--mmap->uses == 0)
+		unmap_mmap(maps, mmap);
 }
 
 // if bin is free and big enough to store size amount of bytes
