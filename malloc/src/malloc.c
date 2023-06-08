@@ -16,7 +16,7 @@ t_memory_maps g_allocations = {
 
 void* ft_malloc(size_t size)
 {
-	t_bin bin = upsert_bin(&g_allocations, size);
+	t_bin bin = upsert_bin(memory_maps_singleton(), size);
 	return bin.p;
 }
 
@@ -24,12 +24,12 @@ void ft_free(void* ptr)
 {
 	if (!ptr)
 		return;
-	t_bin* bin = find_bin(&g_allocations, ptr);
+	t_bin* bin = find_bin(memory_maps_singleton(), ptr);
 	if (!bin)
 		errx(1, "free(): could not find allocation");
 	if (bin->status == FREE)
 		errx(1, "free(): double free");
-	release_bin(&g_allocations, bin);
+	release_bin(memory_maps_singleton(), bin);
 }
 
 void print_allocations()
@@ -37,7 +37,7 @@ void print_allocations()
 	size_t mmaps_count = 0;
 	for (size_t i = 0; i < g_allocations.mmaps_len; i++)
 	{
-		t_mmap* mmap = &g_allocations.mmaps[i];
+		t_mmap* mmap = &memory_maps_singleton()->mmaps[i];
 		if (mmap->start)
 		{
 			printf("mmap in use %p %lu\n", mmap->start, i);
@@ -49,7 +49,7 @@ void print_allocations()
 	size_t bins_count = 0;
 	for (size_t i = 0; i < g_allocations.bins_len; i++)
 	{
-		t_bin* bin = &g_allocations.bins[i];
+		t_bin* bin = &memory_maps_singleton()->bins[i];
 		if (bin->status == USED)
 		{
 			printf("bin in use  %p %lu\n", bin->p, i);

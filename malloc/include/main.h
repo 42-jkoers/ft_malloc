@@ -35,17 +35,25 @@ typedef struct
 
 typedef struct
 {
-	t_bin  bins[MAX_ALLOCATIONS];
-	size_t bins_len;
-	t_mmap mmaps[MAX_ALLOCATIONS];
-	size_t mmaps_len;
+	t_bin*	bins;
+	size_t	bins_len;
+	size_t	bins_size; // in bytes
+	t_mmap* mmaps;
+	size_t	mmaps_len;
+	size_t	mmaps_size;
 } t_memory_maps;
 
-void*  ft_mmap(void* addr, size_t length);
-size_t nearest_multiple_of(size_t number, size_t multiple);
-void   assert_valid_mmap_size(size_t size);
-t_bin  upsert_bin(t_memory_maps* maps, size_t size);
-void   release_bin(t_memory_maps* maps, t_bin* bin);
-void   ft_munmap(void* addr, size_t length);
-t_bin* find_reusable_bin(t_memory_maps* maps, size_t size);
-t_bin* find_bin(t_memory_maps* maps, void* p);
+t_memory_maps* memory_maps_singleton();
+t_memory_maps  memory_maps_construct();
+void		   memory_maps_destruct(t_memory_maps* maps);
+size_t		   memory_maps_mmap_capacity(const t_memory_maps* maps);
+size_t		   memory_maps_bin_capacity(const t_memory_maps* maps);
+
+void*		   ft_mmap(void* addr, size_t length);
+size_t		   nearest_multiple_of(size_t number, size_t multiple);
+void		   assert_valid_mmap_size(size_t size);
+t_bin		   upsert_bin(t_memory_maps* maps, size_t size);
+void		   release_bin(t_memory_maps* maps, t_bin* bin);
+void		   ft_munmap(void* addr, size_t length);
+t_bin*		   find_reusable_bin(t_memory_maps* maps, size_t size);
+t_bin*		   find_bin(t_memory_maps* maps, void* p);
