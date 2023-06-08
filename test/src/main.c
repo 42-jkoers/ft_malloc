@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <time.h>
 #define BILLION 1000000000L
+size_t allocations = 0;
 
-void write_test_data(void* ptr, size_t size)
+void   write_test_data(void* ptr, size_t size)
 {
 	size_t	i = 0;
 	uint8_t c = 0;
@@ -38,6 +39,7 @@ void assert_test_data(void* ptr, size_t size)
 void test_malloc(size_t size)
 {
 	void* ptr = ft_malloc(size);
+	allocations++;
 	write_test_data(ptr, size);
 	assert_test_data(ptr, size);
 	ft_free(ptr);
@@ -75,6 +77,12 @@ int main()
 	}
 	long long duration = get_duration_ns(time);
 	print_allocations();
-	printf("Test passed in %llu nanoseconds, or %llu miliseconds\n", duration, duration / 1000000);
+	printf("Test passed\n");
+	printf("  Allocations       : %lu\n", allocations);
+	const float allocs_per_sec = (float)allocations / (float)duration * BILLION;
+	printf("  Allocations/second: %.1e - %f\n", allocs_per_sec, allocs_per_sec);
+	printf("  Duration          : %lld ns\n", duration);
+	printf("  Duration          : %lld ms\n", duration / 1000000);
+
 	return 0;
 }
