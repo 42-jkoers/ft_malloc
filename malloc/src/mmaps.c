@@ -34,7 +34,7 @@ size_t mmaps_bin_capacity(const t_mmaps* maps)
 	return maps->bins_size / sizeof(t_bin);
 }
 
-void mmaps_grow_mmap(t_mmaps* maps)
+void mmaps_grow_mmaps(t_mmaps* maps)
 {
 	const size_t new_size = maps->mmaps_size * 2;
 	maps->mmaps = ft_mmap_grow(maps->mmaps, maps->mmaps_size, new_size);

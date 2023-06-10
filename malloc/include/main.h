@@ -54,7 +54,7 @@ void	 mmaps_destruct(t_mmaps* maps);
 t_mmaps* mmaps_singleton();
 size_t	 mmaps_mmap_capacity(const t_mmaps* maps);
 size_t	 mmaps_bin_capacity(const t_mmaps* maps);
-void	 mmaps_grow_mmap(t_mmaps* maps);
+void	 mmaps_grow_mmaps(t_mmaps* maps);
 void	 mmaps_grow_bins(t_mmaps* maps);
 
 // todo forward declare t_mmaps
