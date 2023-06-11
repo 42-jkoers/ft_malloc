@@ -10,10 +10,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-t_mmaps g_allocations = {
-	.mmaps_len = 0,
-	.bins_len = 0};
-
 void* ft_malloc(size_t size)
 {
 	if (size < BIN_TINY)
@@ -37,7 +33,7 @@ void ft_free(void* ptr)
 void print_allocations()
 {
 	size_t mmaps_count = 0;
-	for (size_t i = 0; i < g_allocations.mmaps_len; i++)
+	for (size_t i = 0; i < mmaps_singleton()->mmaps_len; i++)
 	{
 		t_mmap* mmap = &mmaps_singleton()->mmaps[i];
 		if (mmap->start)
@@ -49,7 +45,7 @@ void print_allocations()
 	printf("number of mmaps in use: %lu\n\n", mmaps_count);
 
 	size_t bins_count = 0;
-	for (size_t i = 0; i < g_allocations.bins_len; i++)
+	for (size_t i = 0; i < mmaps_singleton()->bins_len; i++)
 	{
 		t_bin* bin = &mmaps_singleton()->bins[i];
 		if (bin->status == USED)
