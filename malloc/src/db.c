@@ -18,12 +18,10 @@ t_mmap* find_create_mmap(t_mmaps* maps)
 
 void add_memory_map(t_mmaps* maps, size_t minumum_size)
 {
-	assert(maps->mmaps_len + 10 < MAX_ALLOCATIONS);
+	const size_t size = nearest_multiple_of(minumum_size, PAGE_SIZE);
+	void*		 p = ft_mmap(NULL, size);
+	t_mmap*		 mmap = find_create_mmap(maps);
 
-	size_t	size = nearest_multiple_of(minumum_size, PAGE_SIZE);
-	void*	p = ft_mmap(NULL, size);
-
-	t_mmap* mmap = find_create_mmap(maps);
 	mmap->start = p;
 	mmap->end = p;
 	mmap->capacity = size;
