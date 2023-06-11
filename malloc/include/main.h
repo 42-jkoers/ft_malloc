@@ -66,7 +66,6 @@ void*	ft_mmap_grow(void* map, size_t curr_size, size_t new_size);
 
 void*	ft_memcpy(void* dest, const void* src, size_t n);
 size_t	nearest_multiple_of(size_t number, size_t multiple);
-void	assert_valid_mmap_size(size_t size);
 t_bin	upsert_bin(t_mmaps* maps, size_t size);
 void	release_bin(t_mmaps* maps, t_bin* bin);
 void	ft_munmap(void* addr, size_t length);
