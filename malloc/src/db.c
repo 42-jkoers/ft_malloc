@@ -2,21 +2,21 @@
 #include "util.h"
 
 // Get place to store mmap data
-t_mmap* find_create_mmap(t_mmaps* maps)
+t_mmap* find_create_mmap(t_db* maps)
 {
 	for (size_t i = 0; i < maps->mmaps_len; i++) // TODO: reverse iteration?
 	{
 		t_mmap* mmap = &maps->mmaps[i];
 		if (!mmap->start) // if mmap is unused
-		{
 			return mmap;
-		}
 	}
-	// No reusable mmap found, create new one
+	if (maps->mmaps_len >= db_mmap_capacity(maps))
+		db_mmaps_grow(maps);
+
 	return &maps->mmaps[maps->mmaps_len++];
 }
 
-void add_memory_map(t_mmaps* maps, size_t minumum_size)
+void add_memory_map(t_db* maps, size_t minumum_size)
 {
 	const size_t size = nearest_multiple_of(minumum_size, PAGE_SIZE);
 	void*		 p = ft_mmap(NULL, size);
@@ -28,7 +28,7 @@ void add_memory_map(t_mmaps* maps, size_t minumum_size)
 	mmap->uses = 0;
 }
 
-t_bin create_bin(t_mmaps* maps, size_t size)
+t_bin create_bin(t_db* maps, size_t size)
 {
 	for (size_t i = 0; i < maps->mmaps_len; i++) // TODO: reverse iteration?
 	{
@@ -36,6 +36,8 @@ t_bin create_bin(t_mmaps* maps, size_t size)
 		if (mmap_remaining_size(mmap) >= size)
 		{
 			t_bin bin = bin_construct(maps, mmap, size);
+			if (maps->bins_len >= db_bin_capacity(maps))
+				db_bins_grow(maps);
 			maps->bins[maps->bins_len++] = bin;
 			return bin;
 		}
@@ -46,7 +48,7 @@ t_bin create_bin(t_mmaps* maps, size_t size)
 }
 
 // marking all bins in this mmap as unmapped memory
-void unmap_bins(t_mmaps* maps, const t_mmap* mmap)
+void unmap_bins(t_db* maps, const t_mmap* mmap)
 {
 	// TODO: can this be optimized?
 	for (size_t i = 0; i < maps->bins_len; i++) // TODO: reverse iteration?
@@ -57,7 +59,7 @@ void unmap_bins(t_mmaps* maps, const t_mmap* mmap)
 	}
 }
 
-void unmap_mmap(t_mmaps* maps, t_mmap* mmap)
+void unmap_mmap(t_db* maps, t_mmap* mmap)
 {
 	assert(mmap >= maps->mmaps && mmap < maps->mmaps + maps->mmaps_len);
 
@@ -66,7 +68,7 @@ void unmap_mmap(t_mmaps* maps, t_mmap* mmap)
 	mmap->start = NULL;
 }
 
-void release_bin(t_mmaps* maps, t_bin* bin)
+void release_bin(t_db* maps, t_bin* bin)
 {
 	bin->status = FREE;
 
@@ -87,7 +89,7 @@ bool bin_should_be_reused(const t_bin* bin, size_t size)
 
 // find a reusable bin by its pointer
 // returns NULL if not found
-t_bin* find_bin(t_mmaps* maps, void* p)
+t_bin* find_bin(t_db* maps, void* p)
 {
 	for (size_t i = 0; i < maps->bins_len; i++)
 	{
@@ -100,7 +102,7 @@ t_bin* find_bin(t_mmaps* maps, void* p)
 
 // find a reusable bin that fits a new allocation of size bytes
 // returns NULL if not found
-t_bin* find_reusable_bin(t_mmaps* maps, size_t size)
+t_bin* find_reusable_bin(t_db* maps, size_t size)
 {
 	for (size_t i = 0; i < maps->bins_len; i++)
 	{
@@ -113,7 +115,7 @@ t_bin* find_reusable_bin(t_mmaps* maps, size_t size)
 	return NULL;
 }
 
-t_bin upsert_bin(t_mmaps* maps, size_t size)
+t_bin upsert_bin(t_db* maps, size_t size)
 {
 	// first try to find a already allocated bin that can be reused
 	t_bin* bin = find_reusable_bin(maps, size);

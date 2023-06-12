@@ -4,9 +4,10 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <sys/types.h>
 
-#define MAX_ALLOCATIONS 1000
+#define INITIAL_MAX_ALLOCATION 1000
 #define BIN_TINY 16
 #define PAGE_SIZE 4096
 
@@ -16,6 +17,13 @@ typedef enum
 	SUCCESS,
 } e_result;
 
+typedef enum
+{
+	FREE,
+	USED,
+	UNMAPPED,
+} e_status;
+
 typedef struct
 {
 	void*  start;
@@ -24,13 +32,6 @@ typedef struct
 	size_t uses;
 } t_mmap;
 size_t mmap_remaining_size(const t_mmap* mmap);
-
-typedef enum
-{
-	FREE,
-	USED,
-	UNMAPPED,
-} e_status;
 
 typedef struct
 {
@@ -45,29 +46,30 @@ typedef struct
 	t_bin*	bins;
 	size_t	bins_len;
 	size_t	bins_size; // in bytes
+
 	t_mmap* mmaps;
 	size_t	mmaps_len;
-	size_t	mmaps_size;
-} t_mmaps;
-t_mmaps	 mmaps_construct();
-void	 mmaps_destruct(t_mmaps* maps);
-t_mmaps* mmaps_singleton();
-size_t	 mmaps_mmap_capacity(const t_mmaps* maps);
-size_t	 mmaps_bin_capacity(const t_mmaps* maps);
-void	 mmaps_grow_mmaps(t_mmaps* maps);
-void	 mmaps_grow_bins(t_mmaps* maps);
+	size_t	mmaps_size; // in bytes
+} t_db;
+t_db   db_construct();
+void   db_destruct(t_db* db);
+t_db*  db_singleton();
+size_t db_mmap_capacity(const t_db* db);
+size_t db_bin_capacity(const t_db* maps);
+void   db_mmaps_grow(t_db* db);
+void   db_bins_grow(t_db* db);
 
-// todo forward declare t_mmaps
-t_bin	bin_construct(const t_mmaps* maps, t_mmap* mmap, size_t size);
-t_mmap* bin_get_mmap(t_mmaps* maps, const t_bin* bin);
+// todo forward declare t_db
+t_bin	bin_construct(const t_db* db, t_mmap* mmap, size_t size);
+t_mmap* bin_get_mmap(t_db* db, const t_bin* bin);
 
 void*	ft_mmap(void* addr, size_t length);
 void*	ft_mmap_grow(void* map, size_t curr_size, size_t new_size);
 
 void*	ft_memcpy(void* dest, const void* src, size_t n);
 size_t	nearest_multiple_of(size_t number, size_t multiple);
-t_bin	upsert_bin(t_mmaps* maps, size_t size);
-void	release_bin(t_mmaps* maps, t_bin* bin);
+t_bin	upsert_bin(t_db* db, size_t size);
+void	release_bin(t_db* db, t_bin* bin);
 void	ft_munmap(void* addr, size_t length);
-t_bin*	find_reusable_bin(t_mmaps* maps, size_t size);
-t_bin*	find_bin(t_mmaps* maps, void* p);
+t_bin*	find_reusable_bin(t_db* db, size_t size);
+t_bin*	find_bin(t_db* db, void* p);

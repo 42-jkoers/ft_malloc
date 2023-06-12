@@ -52,7 +52,7 @@ void allocate_and_read_write(size_t size)
 
 void run_tests()
 {
-	const size_t iterations = 10;
+	const size_t iterations = 20;
 	allocations_i = 0;
 	for (size_t i = 0; i < iterations; i++)
 	{
