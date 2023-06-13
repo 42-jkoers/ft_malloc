@@ -20,7 +20,7 @@ else
 FLAGS 			+= -g3
 endif
 
-LIBS			= $(LIBDIR)/libft/bin/libft.a
+LIBS			=
 
 UNAME_S			= $(shell uname -s)
 ifeq ($(UNAME_S), Linux)
@@ -56,9 +56,6 @@ print_vars:
 $(NAME): $(BINDIR) $(OBJS) $(LIBS)
 	$(CC) $(LIBFLAGS) $(BUILDDIR)/*.$(OBJEXT) -o $(NAME)
 
-$(LIBDIR)/libft/bin/libft.a:
-	$(MAKE) -C $(LIBDIR)/libft
-
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(HEADERS) $(BUILDDIR)
 	$(CC) $(FLAGS) -I$(HEADERDIR) -c $< -o $(BUILDDIR)/$(notdir $@)
 
@@ -69,7 +66,6 @@ $(BINDIR):
 	mkdir -p $(BINDIR)
 
 clean:
-	$(MAKE) -C $(LIBDIR)/libft fclean
 ifneq ($(BUILDDIR),.)
 	/bin/rm -rf $(BUILDDIR)/
 endif

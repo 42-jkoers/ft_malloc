@@ -4,6 +4,8 @@
 #include <time.h>
 #define BILLION 1000000000L
 #define MAX_ALLOCATIONS 10000000
+#define LENGTH(x) (sizeof(x) / sizeof(x[0]))
+
 size_t	  allocations_count = 0;
 size_t	  allocations_i = 0;
 void*	  allocations[MAX_ALLOCATIONS];
@@ -40,11 +42,10 @@ void assert_test_data(void* ptr, size_t size)
 	}
 }
 
-void allocate_and_read_write(size_t size)
+void allocate_and_write(size_t size)
 {
 	void* ptr = ft_malloc(size);
 	write_test_data(ptr, size);
-	assert_test_data(ptr, size);
 	allocations[allocations_i++] = ptr;
 	allocations_count++;
 	allocated_bytes += size;
@@ -52,14 +53,25 @@ void allocate_and_read_write(size_t size)
 
 void run_tests()
 {
-	const size_t iterations = 10;
+	const size_t iterations = 100;
+	const int	 sizes[] = {1, 100, 1000, 10000};
 	allocations_i = 0;
 	for (size_t i = 0; i < iterations; i++)
 	{
-		allocate_and_read_write(1);
-		allocate_and_read_write(100);
-		allocate_and_read_write(1000);
+		for (size_t size_i = 0; size_i < LENGTH(sizes); size_i++)
+			allocate_and_write(sizes[size_i]);
 	}
+	size_t i = 0;
+	while (true)
+	{
+		for (size_t assert_i = 0; assert_i < LENGTH(sizes); assert_i++)
+		{
+			assert_test_data(allocations[assert_i], sizes[assert_i]);
+			if (++i >= allocations_i)
+				goto out;
+		}
+	}
+out:
 	for (size_t i = 0; i < allocations_i; i++)
 	{
 		ft_free(allocations[i]);
@@ -98,7 +110,7 @@ int main()
 	const float allocs_per_sec = (float)allocations_count / (float)duration * BILLION;
 	printf("  Allocations/second: %.1e - %f\n", allocs_per_sec, allocs_per_sec);
 	printf("  Allocated         : %.2f MB - %lld bytes\n", allocated_bytes / 1000000.0, allocated_bytes);
-	printf("  Duration          : %lld ms - %lld ns\n", duration / 1000000, duration);
+	printf("  Test duration     : %lld ms - %lld ns\n", duration / 1000000, duration);
 
 	return 0;
 }

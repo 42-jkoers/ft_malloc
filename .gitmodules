@@ -1,3 +1,0 @@
-[submodule "malloc/lib/libft"]
-	path = malloc/lib/libft
-	url = git@github.com:42-jkoers/libft.git

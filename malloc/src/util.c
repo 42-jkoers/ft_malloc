@@ -24,6 +24,7 @@ size_t nearest_multiple_of(size_t number, size_t multiple)
 
 static void* ft_mmap_unsafe(void* addr, size_t len, int flags)
 {
+	g_debug.mmap_calls++;
 	return mmap(addr, len, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED | flags, -1, 0);
 }
 
@@ -63,6 +64,7 @@ void* ft_mmap_grow(void* map, size_t curr_size, size_t new_size)
 	assert_valid_mmap_addr(map);
 	assert_valid_mmap_size(curr_size);
 	assert_valid_mmap_size(new_size);
+	assert(new_size > curr_size);
 
 	if (ft_mmap_try_grow(map, new_size) == SUCCESS)
 		return map;
@@ -77,5 +79,6 @@ void ft_munmap(void* addr, size_t length)
 {
 	assert_valid_mmap_addr(addr);
 	assert_valid_mmap_size(length);
+	g_debug.mumap_calls++;
 	assert(munmap(addr, length) == 0);
 }
