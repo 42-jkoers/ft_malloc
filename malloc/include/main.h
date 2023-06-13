@@ -14,6 +14,7 @@
 typedef struct
 {
 	size_t mmap_calls;
+	size_t mumap_calls;
 } t_debug;
 extern t_debug g_debug;
 

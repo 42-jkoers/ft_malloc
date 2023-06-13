@@ -79,5 +79,6 @@ void ft_munmap(void* addr, size_t length)
 {
 	assert_valid_mmap_addr(addr);
 	assert_valid_mmap_size(length);
+	g_debug.mumap_calls++;
 	assert(munmap(addr, length) == 0);
 }

@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 // TODO: remove
-t_debug g_debug = {.mmap_calls = 0};
+t_debug g_debug = {.mmap_calls = 0, .mumap_calls = 0};
 //
 
 void* ft_malloc(size_t size)
@@ -36,7 +36,15 @@ void ft_free(void* ptr)
 
 void print_allocations()
 {
-	printf("number of mmaps in use: %lu\n", db_singleton()->mmaps_i);
+	size_t mmaps_count = 0;
+	for (size_t i = 0; i < db_singleton()->mmaps_i; i++)
+	{
+		t_mmap* mmap = &db_singleton()->mmaps[i];
+		if (mmap->uses)
+			mmaps_count++;
+	}
+
+	printf("number of mmaps in use: %lu\n", mmaps_count);
 
 	size_t bins_count = 0;
 	for (size_t i = 0; i < db_bin_capacity(db_singleton()); i++)
@@ -47,4 +55,5 @@ void print_allocations()
 	}
 	printf("number of bins in use : %lu\n", bins_count);
 	printf("number of mmap calls  : %lu\n", g_debug.mmap_calls);
+	printf("number of munmap calls: %lu\n", g_debug.mumap_calls);
 }
