@@ -14,7 +14,7 @@ void* ft_malloc(size_t size)
 {
 	if (size < BIN_TINY)
 		size = BIN_TINY;
-	t_bin bin = upsert_bin(db_singleton(), size);
+	t_bin bin = db_upsert_bin(db_singleton(), size);
 	return bin.p;
 }
 
@@ -22,7 +22,7 @@ void ft_free(void* ptr)
 {
 	if (!ptr)
 		return;
-	t_bin* bin = find_bin(db_singleton(), ptr);
+	t_bin* bin = db_find_bin(db_singleton(), ptr);
 	if (!bin)
 		errx(1, "free(): could not find allocation");
 	if (bin->status == FREE)

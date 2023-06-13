@@ -51,13 +51,16 @@ typedef struct
 	size_t	mmaps_len;
 	size_t	mmaps_size; // in bytes
 } t_db;
-t_db   db_construct();
-void   db_destruct(t_db* db);
-t_db*  db_singleton();
-size_t db_mmap_capacity(const t_db* db);
-size_t db_bin_capacity(const t_db* maps);
-void   db_mmaps_grow(t_db* db);
-void   db_bins_grow(t_db* db);
+t_db	db_construct();
+void	db_destruct(t_db* db);
+t_db*	db_singleton();
+size_t	db_mmap_capacity(const t_db* db);
+size_t	db_bin_capacity(const t_db* maps);
+void	db_mmaps_grow(t_db* db);
+void	db_bins_grow(t_db* db);
+t_mmap* db_find_create_mmap(t_db* db);
+t_bin	db_create_bin(t_db* db, size_t size);
+void	db_add_memory_map(t_db* db, size_t minumum_size);
 
 // todo forward declare t_db
 t_bin	bin_construct(const t_db* db, t_mmap* mmap, size_t size);
@@ -68,8 +71,8 @@ void*	ft_mmap_grow(void* map, size_t curr_size, size_t new_size);
 
 void*	ft_memcpy(void* dest, const void* src, size_t n);
 size_t	nearest_multiple_of(size_t number, size_t multiple);
-t_bin	upsert_bin(t_db* db, size_t size);
+t_bin	db_upsert_bin(t_db* db, size_t size);
 void	release_bin(t_db* db, t_bin* bin);
 void	ft_munmap(void* addr, size_t length);
-t_bin*	find_reusable_bin(t_db* db, size_t size);
-t_bin*	find_bin(t_db* db, void* p);
+t_bin*	db_find_reusable_bin(t_db* db, size_t size);
+t_bin*	db_find_bin(t_db* db, void* p);
