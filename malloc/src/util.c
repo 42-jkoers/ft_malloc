@@ -24,6 +24,7 @@ size_t nearest_multiple_of(size_t number, size_t multiple)
 
 static void* ft_mmap_unsafe(void* addr, size_t len, int flags)
 {
+	g_debug.mmap_calls++;
 	return mmap(addr, len, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED | flags, -1, 0);
 }
 

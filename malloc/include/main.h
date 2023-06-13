@@ -11,6 +11,12 @@
 #define BIN_TINY 16
 #define PAGE_SIZE 4096
 
+typedef struct
+{
+	size_t mmap_calls;
+} t_debug;
+extern t_debug g_debug;
+
 typedef enum
 {
 	FAIL,
