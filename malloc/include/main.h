@@ -31,6 +31,7 @@ typedef struct
 	size_t capacity; // in bytes
 	size_t uses;
 } t_mmap;
+t_mmap mmap_construct(size_t min_size);
 size_t mmap_remaining_size(const t_mmap* mmap);
 
 typedef struct
@@ -44,13 +45,13 @@ typedef struct
 typedef struct
 {
 	t_bin*	bins;
-	size_t	bins_len;
 	size_t	bins_size; // in bytes
 
 	t_mmap* mmaps;
-	size_t	mmaps_len;
 	size_t	mmaps_size; // in bytes
+	size_t	mmaps_i;
 } t_db;
+
 t_db	db_construct();
 void	db_destruct(t_db* db);
 t_db*	db_singleton();
@@ -58,21 +59,15 @@ size_t	db_mmap_capacity(const t_db* db);
 size_t	db_bin_capacity(const t_db* maps);
 void	db_mmaps_grow(t_db* db);
 void	db_bins_grow(t_db* db);
-t_mmap* db_find_create_mmap(t_db* db);
-t_bin	db_create_bin(t_db* db, size_t size);
-void	db_add_memory_map(t_db* db, size_t minumum_size);
-
-// todo forward declare t_db
-t_bin	bin_construct(const t_db* db, t_mmap* mmap, size_t size);
-t_mmap* bin_get_mmap(t_db* db, const t_bin* bin);
+t_bin*	db_bin_find_create(t_db* db, size_t size);
+void	db_bin_release(t_db* db, t_bin* bin);
+t_bin*	db_bin_find_p(t_db* db, void* p);
+t_bin	bin_construct(const t_db* db, t_mmap* mmap, size_t size); // TODO: forward declare
+t_mmap* bin_get_mmap(const t_db* db, const t_bin* bin);
 
 void*	ft_mmap(void* addr, size_t length);
 void*	ft_mmap_grow(void* map, size_t curr_size, size_t new_size);
 
 void*	ft_memcpy(void* dest, const void* src, size_t n);
 size_t	nearest_multiple_of(size_t number, size_t multiple);
-t_bin	db_upsert_bin(t_db* db, size_t size);
-void	release_bin(t_db* db, t_bin* bin);
 void	ft_munmap(void* addr, size_t length);
-t_bin*	db_find_reusable_bin(t_db* db, size_t size);
-t_bin*	db_find_bin(t_db* db, void* p);

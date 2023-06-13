@@ -16,12 +16,12 @@ t_db db_construct()
 
 	db.bins_size = nearest_multiple_of(INITIAL_MAX_ALLOCATION * sizeof(t_bin), PAGE_SIZE);
 	db.bins = ft_mmap(NULL, db.bins_size);
-	db.bins_len = 0;
+	for (size_t i = 0; i < db_bin_capacity(&db); i++)
+		db.bins[i] = (t_bin){.status = UNMAPPED};
 
 	db.mmaps_size = nearest_multiple_of(INITIAL_MAX_ALLOCATION * sizeof(t_mmap), PAGE_SIZE);
 	db.mmaps = ft_mmap(NULL, db.mmaps_size);
-	db.mmaps_len = 0;
-
+	db.mmaps_i = 0;
 	return db;
 }
 
@@ -46,9 +46,11 @@ void db_mmaps_grow(t_db* db)
 
 void db_bins_grow(t_db* db)
 {
-	const size_t new_size = db->bins_size * 2;
-	db->bins = ft_mmap_grow(db->bins, db->bins_size, new_size);
-	db->bins_size = new_size;
+	const size_t old_size = db->bins_size;
+	db->bins_size *= 2;
+	db->bins = ft_mmap_grow(db->bins, old_size, db->bins_size);
+	for (size_t i = old_size; i < db_bin_capacity(db); i++)
+		db->bins[i] = (t_bin){.status = UNMAPPED};
 }
 
 void db_destruct(t_db* db)
@@ -58,10 +60,10 @@ void db_destruct(t_db* db)
 }
 
 // marking all bins in this mmap as unmapped memory
-void db_unmap_bins(t_db* db, const t_mmap* mmap)
+void db_bin_unmap(t_db* db, const t_mmap* mmap)
 {
 	// TODO: can this be optimized?
-	for (size_t i = 0; i < db->bins_len; i++) // TODO: reverse iteration?
+	for (size_t i = 0; i < db_bin_capacity(db); i++) // TODO: reverse iteration?
 	{
 		t_bin* bin = &db->bins[i];
 		if (bin_get_mmap(db, bin) == mmap)
@@ -69,33 +71,20 @@ void db_unmap_bins(t_db* db, const t_mmap* mmap)
 	}
 }
 
-void db_unmap_mmap(t_db* db, t_mmap* mmap)
+void db_mmap_unmap(t_db* db, t_mmap* mmap)
 {
-	assert(mmap >= db->mmaps && mmap < db->mmaps + db->mmaps_len);
+	assert(mmap >= db->mmaps && mmap < db->mmaps + db_mmap_capacity(db));
 
-	db_unmap_bins(db, mmap);
+	db_bin_unmap(db, mmap);
 	ft_munmap(mmap->start, mmap->capacity);
 	mmap->start = NULL;
 }
 
-void release_bin(t_db* db, t_bin* bin)
+void db_bin_release(t_db* db, t_bin* bin)
 {
 	bin->status = FREE;
 
 	t_mmap* mmap = bin_get_mmap(db, bin);
 	if (--mmap->uses == 0)
-		db_unmap_mmap(db, mmap);
-}
-
-t_bin db_upsert_bin(t_db* db, size_t size)
-{
-	// first try to find a already allocated bin that can be reused
-	t_bin* bin = db_find_reusable_bin(db, size);
-	if (bin)
-	{
-		bin->status = USED;
-		return *bin;
-	}
-	// if no reusable bin found, create a new one
-	return db_create_bin(db, size);
+		db_mmap_unmap(db, mmap);
 }
