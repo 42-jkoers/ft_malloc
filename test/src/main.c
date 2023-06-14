@@ -110,7 +110,7 @@ int main()
 	const float allocs_per_sec = (float)allocations_count / (float)duration * BILLION;
 	printf("  Allocations/second: %.1e - %f\n", allocs_per_sec, allocs_per_sec);
 	printf("  Allocated         : %.2f MB - %lld bytes\n", allocated_bytes / 1000000.0, allocated_bytes);
-	printf("  Test duration     : %lld ms - %lld ns\n", duration / 1000000, duration);
+	printf("  Test duration     : %lld ms - %lld ns\n", (long long)roundf(duration / 1000000.0), duration);
 
 	return 0;
 }
