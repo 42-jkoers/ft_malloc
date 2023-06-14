@@ -1,5 +1,6 @@
 #include "main.h"
 #include "util.h"
+#include <math.h>
 #include <stdio.h>
 #include <time.h>
 #define BILLION 1000000000L
