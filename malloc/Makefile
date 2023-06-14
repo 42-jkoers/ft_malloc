@@ -17,7 +17,7 @@ FLAGS			= -Wall -Wextra -Werror -fpic
 ifdef PRODUCTION
 FLAGS			+= -O3 -D PRODUCTION
 else
-FLAGS 			+= -g3
+FLAGS 			+= -g3 -Ofast
 endif
 
 LIBS			=

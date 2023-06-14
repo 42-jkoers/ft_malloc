@@ -18,10 +18,10 @@ FLAGS			= -Wall -Wextra -Werror
 ifdef PRODUCTION
 FLAGS			+= -O3 -D PRODUCTION
 else
-FLAGS 			+= -g3
+FLAGS 			+= -g3 -Ofast
 endif
 
-LIBS			= -L../malloc/bin -lmalloc
+LIBS			= -L../malloc/bin -lmalloc -lm
 
 UNAME_S			= $(shell uname -s)
 ifeq ($(UNAME_S), Linux)
