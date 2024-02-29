@@ -31,12 +31,6 @@ size_t db_mmap_capacity(const t_db* db)
 	return db->mmaps_size / sizeof(t_mmap);
 }
 
-// how may t_bin structs can fit in the mmaps.bins_size
-size_t db_bin_capacity(const t_db* db)
-{
-	return db->bins_size / sizeof(t_bin);
-}
-
 void db_mmaps_grow(t_db* db)
 {
 	const size_t new_size = db->mmaps_size * 2;

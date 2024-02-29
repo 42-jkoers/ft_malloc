@@ -15,10 +15,3 @@ t_bin bin_construct(const t_db* maps, t_mmap* mmap, size_t size)
 
 	return bin;
 }
-
-t_mmap* bin_get_mmap(const t_db* maps, const t_bin* bin)
-{
-	if (bin->status == UNMAPPED)
-		return NULL;
-	return &maps->mmaps[bin->mmap_offset];
-}

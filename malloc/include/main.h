@@ -59,18 +59,22 @@ typedef struct
 	size_t	mmaps_i;
 } t_db;
 
+// how many t_bin structs can fit in the mmaps.bins_size
+#define db_bin_capacity(db) ((db)->bins_size / sizeof(t_bin))
+
+#define bin_get_mmap(maps, bin) ((bin)->status == UNMAPPED ? NULL : &(maps)->mmaps[(bin)->mmap_offset])
+
 t_db	db_construct();
 void	db_destruct(t_db* db);
 t_db*	db_singleton();
 size_t	db_mmap_capacity(const t_db* db);
-size_t	db_bin_capacity(const t_db* maps);
 void	db_mmaps_grow(t_db* db);
 void	db_bins_grow(t_db* db);
 t_bin*	db_bin_find_create(t_db* db, size_t size);
 void	db_bin_release(t_db* db, t_bin* bin);
 t_bin*	db_bin_find_p(t_db* db, void* p);
 t_bin	bin_construct(const t_db* db, t_mmap* mmap, size_t size); // TODO: forward declare
-t_mmap* bin_get_mmap(const t_db* db, const t_bin* bin);
+t_mmap* foo();
 
 void*	ft_mmap(void* addr, size_t length);
 void*	ft_mmap_grow(void* map, size_t curr_size, size_t new_size);
